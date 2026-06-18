@@ -1,4 +1,6 @@
 
+using E_Commerce.Infrastructure;
+
 namespace E_Commerce.API
 {
     public class Program
@@ -10,6 +12,7 @@ namespace E_Commerce.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddInfrastrucreServices(builder.Configuration);
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
