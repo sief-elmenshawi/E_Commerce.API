@@ -2,6 +2,7 @@
 using E_Commerce.Application.Common;
 using E_Commerce.Application.Contracts;
 using E_Commerce.Application.DTOs;
+using E_Commerce.Application.Specifications;
 using E_Commerce.Domain.Contracts;
 using E_Commerce.Domain.Entities.Products;
 using System;
@@ -28,9 +29,10 @@ namespace E_Commerce.Application.Services
 
         }
 
-        public async Task<Result<IReadOnlyList<ProductDto>>> GetAllProductsAsync(CancellationToken ct = default)
+        public async Task<Result<IReadOnlyList<ProductDto>>> GetAllProductsAsync(ProductQueryParams queryParams,CancellationToken ct = default)
         {
-            var products = await unitOfWork.GetRepository<Product,int>().GetAllAsync(ct);
+            var spec = new ProductWithTypeAndBrandSpec(queryParams);
+            var products = await unitOfWork.GetRepository<Product,int>().GetAllAsync(spec);
             return Result<IReadOnlyList<ProductDto>>.Ok(mapper.Map<IReadOnlyList<ProductDto>>(products));
         }
 
@@ -43,7 +45,8 @@ namespace E_Commerce.Application.Services
 
         public async Task<Result<ProductDto>> GetProductByIdAsync(int id, CancellationToken ct = default)
         {
-            var product = await unitOfWork.GetRepository<Product, int>().GetByIdAsync(id, ct);
+            var spec = new ProductWithTypeAndBrandSpec(id);
+            var product = await unitOfWork.GetRepository<Product, int>().GetByIdAsync(spec, ct);
             if (product == null)
                 return Result<ProductDto>.Fail(Error.NotFound("Product Not Found" ,$"Product With Id {id} Is Not Found"));
             
