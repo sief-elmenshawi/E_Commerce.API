@@ -9,10 +9,12 @@ namespace E_Commerce.Application.Specifications
 {
     internal class ProductWithTypeAndBrandSpec : BaseSpecification<Product,int>
     {
+        // Get ALL
         public ProductWithTypeAndBrandSpec(ProductQueryParams queryParams)
             : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId.Value)
             && (!queryParams.TypeId.HasValue || p.TypeId == queryParams.TypeId.Value)
             && (string.IsNullOrWhiteSpace(queryParams.SearchValue) || p.Name.ToLower().Contains(queryParams.SearchValue.ToLower())))
+       
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
@@ -36,8 +38,10 @@ namespace E_Commerce.Application.Specifications
                     break;
             }
 
+            ApplyPagination(queryParams.PageSize , queryParams.PageIndex);
         }
 
+        // Get By Id
         public ProductWithTypeAndBrandSpec(int id) : base(x=>x.Id == id)
         {
             AddInclude(p => p.ProductType);

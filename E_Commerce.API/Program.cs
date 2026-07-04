@@ -20,9 +20,10 @@ namespace E_Commerce.API
             builder.Services.AddInfrastrucreServices(builder.Configuration);
             builder.Services.AddApplicationServices();
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection("UrlSettings"));
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
 
             var app = builder.Build();
 
@@ -31,7 +32,8 @@ namespace E_Commerce.API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }   
             app.UseStaticFiles(new StaticFileOptions
             {
