@@ -7,6 +7,7 @@ namespace E_Commerce.API.Extensions
         public static async Task<WebApplication> SeedAndMigrateDataAsync(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
+
             var seeder = scope.ServiceProvider.GetRequiredKeyedService<IDataSeeder>("Catalog");
             await seeder.SeedDataAsync();
 

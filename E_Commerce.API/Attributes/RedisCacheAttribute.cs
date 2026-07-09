@@ -8,7 +8,7 @@ namespace E_Commerce.API.Attributes
     public class RedisCacheAttribute : ActionFilterAttribute
     {
         private readonly int _durationInSeconds;
-        public RedisCacheAttribute(int durationInSeconds)
+        public RedisCacheAttribute(int durationInSeconds = 60)
         {
             _durationInSeconds = durationInSeconds;
         }
@@ -19,7 +19,7 @@ namespace E_Commerce.API.Attributes
             var cacheKey = CreateCacheKey(context.HttpContext.Request);
 
             // Check If Cache Data Exists 
-            var cached = await cacheService.GetAsync(cacheKey);
+            var cached = await cacheService.GetDataAsync(cacheKey);
 
             // If Exists, Return Cached Data and Skip Executing End point
             if(!string.IsNullOrEmpty(cached))
@@ -35,7 +35,7 @@ namespace E_Commerce.API.Attributes
             // If Not Exists, Execute End point and Cache the Result if 200 ok response
             var executed = await next.Invoke();
             if(executed.Result is OkObjectResult { Value : not null} ok)
-                await cacheService.SetAsync(cacheKey, ok.Value, TimeSpan.FromSeconds(_durationInSeconds));
+                await cacheService.SetDataAsync(cacheKey, ok.Value, TimeSpan.FromSeconds(_durationInSeconds));
             return;
         }
         private static string CreateCacheKey(HttpRequest request)
@@ -43,11 +43,14 @@ namespace E_Commerce.API.Attributes
             //Path 
 
             var key = new StringBuilder();
-            key.Append(request.Path).Append("?");
-
-            foreach (var (k, v) in request.Query.OrderBy(x => x.Key))
+            key.Append(request.Path);
+            if (request.Query.Any())
             {
-                key.Append(k).Append("=").Append(v).Append("&");
+                key.Append('?');
+                foreach (var (k, v) in request.Query.OrderBy(x => x.Key))
+                {
+                    key.Append(k).Append('=').Append(v).Append('&');
+                }
             }
             return key.ToString();
         }

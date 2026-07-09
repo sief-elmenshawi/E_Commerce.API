@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Security.Claims;
 
 namespace E_Commerce.API.Controllers
 {
@@ -12,7 +13,7 @@ namespace E_Commerce.API.Controllers
         public static ActionResult<T> ToActionResult<T>(Result<T> result)
         {
             //Success
-            if(result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return new OkObjectResult(result.data);
             }
@@ -24,7 +25,7 @@ namespace E_Commerce.API.Controllers
 
         public static ActionResult ToActionResult(Result result)
         {
-            
+
             if (result.IsSuccess)
             {
                 return new OkResult();
@@ -41,13 +42,13 @@ namespace E_Commerce.API.Controllers
             var firstError = errors[0];
 
             var statusCode = firstError.ErrorType switch
-            { 
+            {
                 ErrorType.NotFound => StatusCodes.Status404NotFound,
                 ErrorType.Validation => StatusCodes.Status400BadRequest,
                 ErrorType.Conflict => StatusCodes.Status409Conflict,
                 ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
                 ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-                _=> StatusCodes.Status500InternalServerError 
+                _ => StatusCodes.Status500InternalServerError
             };
 
             var problem = new ProblemDetails()
@@ -55,11 +56,18 @@ namespace E_Commerce.API.Controllers
                 Status = statusCode,
                 Title = firstError.Code,
                 Detail = firstError.Description,
-                Extensions = { ["errors"] = errors}
+                Extensions = { ["errors"] = errors }
             };
 
             return new ObjectResult(problem) { StatusCode = statusCode };
 
         }
+
+        protected string GetEmailFromToken()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email) ?? throw new UnauthorizedAccessException("Email claim not found");
+            return email;
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿using E_Commerce.Domain.Contracts;
-using E_Commerce.Domain.Entities.Identity;
-using E_Commerce.Infrastructure.Data;
+using E_Commerce.Infrastructure.Identity.Data;
+using E_Commerce.Infrastructure.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ using System.Text;
 
 namespace E_Commerce.Infrastructure.DataSeeding
 {
-    public class IdentityDataSeeder : IDataSeeder
+    internal class IdentityDataSeeder : IDataSeeder
     {
         private readonly StoreIdentityDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
@@ -38,25 +38,29 @@ namespace E_Commerce.Infrastructure.DataSeeding
                 }
                 if (!await userManager.Users.AnyAsync(ct))
                 {
-                    var user = new ApplicationUser()
+                    var admin = new ApplicationUser()
                     {
                         DisplayName = "Serag Ibrahim",
-                        Email = "Serag@Gmail.com",
+                        Email = "Serag@gmail.com",
                         UserName = "Serag",
-                        PhoneNumber = "1234567890",
+                        PhoneNumber = "0123456789",
 
                     };
-                    var result = await userManager.CreateAsync(user, "P@ssw0rd");
+                    var result = await userManager.CreateAsync(admin, "P@ssw0rd");
                     if (result.Succeeded)
-                        await userManager.AddToRoleAsync(user, "Admin");
+                    {
+                        await userManager.AddToRoleAsync(admin, "SuperAdmin");
+                    }
                     else
-                        logger.LogWarning("The User did not Create");
+                    {    var Errors = string.Join(";", result.Errors.Select(e => e.Description));
+                        logger.LogWarning($"The User did not Create{Errors}");
+                    }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred while seeding identity data.");
-                throw;
+                return;
             }
             
         }

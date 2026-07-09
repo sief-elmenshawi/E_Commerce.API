@@ -4,6 +4,9 @@ using E_Commerce.Application;
 using E_Commerce.Application.Profiles;
 using E_Commerce.Domain.Contracts;
 using E_Commerce.Infrastructure;
+using E_Commerce.Infrastructure.Identity.Entities;
+using E_Commerce.Infrastructure.Identity.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 
 namespace E_Commerce.API
@@ -20,10 +23,14 @@ namespace E_Commerce.API
             builder.Services.AddInfrastrucreServices(builder.Configuration);
             builder.Services.AddApplicationServices();
 
+
+            builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection("UrlSettings"));
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.Configure<UrlSettings>(builder.Configuration.GetSection("UrlSettings"));
 
             var app = builder.Build();
 

@@ -19,9 +19,9 @@ namespace E_Commerce.Infrastructure.Repositories
             return value.IsNullOrEmpty ? null : value.ToString();
         }
 
-        public async Task SetAsync(string cacheKey, string cacheValue, TimeSpan timeToLive, CancellationToken ct = default)
+        public async Task SetAsync(string cacheKey, string cacheValue, TimeSpan? timeToLive = null, CancellationToken ct = default)
         {
-            await _database.StringSetAsync(cacheKey, cacheValue, timeToLive);
+            await _database.StringSetAsync(cacheKey, cacheValue, timeToLive ?? TimeSpan.FromDays(2));
         }
     }
 }

@@ -8,6 +8,6 @@ namespace E_Commerce.Domain.Contracts
     {
         Task<string?> GetAsync(string cacheKey,CancellationToken ct = default);
 
-        Task SetAsync(string cacheKey,string cacheValue,TimeSpan timeToLive,CancellationToken ct = default);
+        Task SetAsync(string cacheKey,string cacheValue,TimeSpan? timeToLive = null,CancellationToken ct = default);
     }
 }

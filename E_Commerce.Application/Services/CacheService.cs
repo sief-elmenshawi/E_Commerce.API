@@ -15,18 +15,18 @@ namespace E_Commerce.Application.Services
         {
             this.cacheRepository = cacheRepository;
         }
-        public Task<string?> GetAsync(string cacheKey, CancellationToken ct = default)
+        public async Task<string?> GetDataAsync(string cacheKey, CancellationToken ct = default)
         {
-            return cacheRepository.GetAsync(cacheKey, ct);
+            return await cacheRepository.GetAsync(cacheKey, ct);
         }
 
-        public Task SetAsync(string cacheKey, object cacheValue, TimeSpan timeToLive , CancellationToken ct = default)
+        public async Task SetDataAsync(string cacheKey, object cacheValue, TimeSpan? timeToLive = null, CancellationToken ct = default)
         {
             var json = JsonSerializer.Serialize(cacheValue, new JsonSerializerOptions 
             { 
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase, 
             });
-            return cacheRepository.SetAsync(cacheKey, json, timeToLive, ct);
+            await cacheRepository.SetAsync(cacheKey, json, timeToLive, ct);
         }
     }
 }

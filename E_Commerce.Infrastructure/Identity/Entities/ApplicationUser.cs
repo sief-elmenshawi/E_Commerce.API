@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace E_Commerce.Domain.Entities.Identity
+namespace E_Commerce.Infrastructure.Identity.Entities
 {
     public class ApplicationUser : IdentityUser
     {
