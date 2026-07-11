@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Domain.Common;
 using E_Commerce.Domain.Contracts;
+using E_Commerce.Domain.Entities.Orders;
 using E_Commerce.Domain.Entities.Products;
 using E_Commerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,9 @@ namespace E_Commerce.Infrastructure.DataSeeding
 				await seedIfEmptyAsync<ProductBrand,int>(seedRoot, "brands.json",ct);
 				await seedIfEmptyAsync<ProductType,int>(seedRoot, "types.json", ct);
 				await seedIfEmptyAsync<Product,int>(seedRoot, "products.json", ct);
+				await seedIfEmptyAsync<DeliveryMethod,int>(seedRoot, "delivery.json", ct);
 
-				int result = await dbContext.SaveChangesAsync(ct);
+                int result = await dbContext.SaveChangesAsync(ct);
 
 				if (result > 0)
 					logger.LogInformation($"{result} Rows Add");
@@ -37,10 +39,10 @@ namespace E_Commerce.Infrastructure.DataSeeding
 					logger.LogInformation($"Database Already Seeded");
 
             }
-			catch (Exception)
+			catch (Exception ex)
 			{
-
-				throw;
+				logger.LogError(ex, "Failed To Seed Data");
+				return;
 			}
         }
 
