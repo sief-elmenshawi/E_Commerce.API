@@ -9,5 +9,8 @@ namespace E_Commerce.Infrastructure.Identity.Entities
     {
         public string DisplayName { get; set; } = default!;
         public Address? Address { get; set; }
+
+        public string? RefreshTokenHash { get; set; }
+        public DateTime? RefreshTokenExpiresOn { get; set; }
     }
 }

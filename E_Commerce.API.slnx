@@ -3,4 +3,5 @@
   <Project Path="E_Commerce.Application/E_Commerce.Application.csproj" />
   <Project Path="E_Commerce.Domain/E_Commerce.Domain.csproj" />
   <Project Path="E_Commerce.Infrastructure/E_Commerce.Infrastructure.csproj" />
+  <Project Path="E_Commerce.Tests/E_Commerce.Tests.csproj" Id="5004515a-524d-4f3e-a5c0-6bb8a11b9bf7" />
 </Solution>

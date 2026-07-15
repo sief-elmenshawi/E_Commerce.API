@@ -1,4 +1,5 @@
-﻿using E_Commerce.Application.Common;
+﻿using Asp.Versioning;
+using E_Commerce.Application.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -6,7 +7,8 @@ using System.Security.Claims;
 
 namespace E_Commerce.API.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ApiBaseController : ControllerBase
     {

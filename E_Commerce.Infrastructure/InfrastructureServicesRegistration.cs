@@ -49,10 +49,11 @@ namespace E_Commerce.Infrastructure
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<ITokenService, TokenService>();
 
             
-            var jwtSetting = configuration.GetSection("Jwt").Get<JwtSettings>()
+            var jwtSetting = configuration.GetSection("JWT").Get<JwtSettings>()
                 ?? throw new InvalidOperationException("JWT settings are not configured.");
 
             services.AddAuthentication(opt =>

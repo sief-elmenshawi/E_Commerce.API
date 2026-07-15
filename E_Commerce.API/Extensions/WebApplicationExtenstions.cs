@@ -1,4 +1,6 @@
 ﻿using E_Commerce.Domain.Contracts;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace E_Commerce.API.Extensions
 {
@@ -15,6 +17,14 @@ namespace E_Commerce.API.Extensions
             await IdentitySeeder.SeedDataAsync();
 
 
+            return app;
+        }
+        public static WebApplication UseApiHealthChecks(this WebApplication app)
+        {
+            app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
             return app;
         }
     }
