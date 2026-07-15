@@ -4,6 +4,7 @@ using E_Commerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260715190239_UpdatePaymentModule")]
+    partial class UpdatePaymentModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,28 +144,6 @@ namespace E_Commerce.Infrastructure.Data.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Payments.ProcessedWebhookEvent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ProcessedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StripeEventId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StripeEventId")
-                        .IsUnique();
-
-                    b.ToTable("ProcessedWebhookEvents");
                 });
 
             modelBuilder.Entity("E_Commerce.Domain.Entities.Products.Product", b =>

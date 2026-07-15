@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Domain.Common;
+using E_Commerce.Domain.Entities.Payments;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,6 +23,8 @@ namespace E_Commerce.Domain.Entities.Orders
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         public decimal SubTotal { get; set; }
+        public ICollection<Payment> Payments { get; set; } = [];
+
 
         public decimal GetTotal() => SubTotal + (DeliveryMethod? .Cost ?? 0);
 

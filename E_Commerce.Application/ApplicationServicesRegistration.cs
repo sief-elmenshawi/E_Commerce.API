@@ -1,11 +1,6 @@
 ﻿using E_Commerce.Application.Contracts;
-using E_Commerce.Application.Profiles;
 using E_Commerce.Application.Services;
-using E_Commerce.Domain.Entities.Products;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace E_Commerce.Application
 {
@@ -14,11 +9,12 @@ namespace E_Commerce.Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddAutoMapper(c => { }, typeof(ApplicationServicesRegistration).Assembly);
-            services.AddScoped<IProductService,ProductService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IOrderService,OrderServices>();
+            services.AddScoped<IOrderService, OrderServices>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
 
             return services;

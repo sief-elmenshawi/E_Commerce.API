@@ -5,7 +5,9 @@ using E_Commerce.Infrastructure.DataSeeding;
 using E_Commerce.Infrastructure.Identity.Data;
 using E_Commerce.Infrastructure.Identity.Entities;
 using E_Commerce.Infrastructure.Identity.Services;
+using E_Commerce.Infrastructure.Options;
 using E_Commerce.Infrastructure.Repositories;
+using E_Commerce.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +23,7 @@ namespace E_Commerce.Infrastructure
 {
     public static class InfrastructureServicesRegistration
     {
-        public static IServiceCollection AddInfrastrucreServices(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddInfrastrucreServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
@@ -35,7 +37,10 @@ namespace E_Commerce.Infrastructure
             //services.AddScoped<IDataSeeder,CatalogDataSeeder>();
             services.AddKeyedScoped<IDataSeeder, CatalogDataSeeder>("Catalog");
             services.AddKeyedScoped<IDataSeeder, IdentityDataSeeder>("Identity");
-            services.AddScoped<IUnitOfWork , UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+            services.AddScoped<IPaymentGateway, StripePaymentGateway>();
 
             services.AddSingleton<IConnectionMultiplexer>(Config =>
             {
@@ -52,7 +57,7 @@ namespace E_Commerce.Infrastructure
             services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<ITokenService, TokenService>();
 
-            
+
             var jwtSetting = configuration.GetSection("JWT").Get<JwtSettings>()
                 ?? throw new InvalidOperationException("JWT settings are not configured.");
 

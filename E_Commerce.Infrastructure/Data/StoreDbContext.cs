@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Domain.Entities.Orders;
+using E_Commerce.Domain.Entities.Payments;
 using E_Commerce.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,6 +17,8 @@ namespace E_Commerce.Infrastructure.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<ProcessedWebhookEvent> ProcessedWebhookEvents { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

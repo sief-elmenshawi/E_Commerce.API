@@ -23,7 +23,7 @@ namespace E_Commerce.Application.Specifications
 
         public bool IsPaginated { get; private set; }
 
-        protected void ApplyPagination(int pageSize , int pageIndex)
+        protected void ApplyPagination(int pageSize, int pageIndex)
         {
             IsPaginated = true;
             Take = pageSize;
@@ -45,7 +45,7 @@ namespace E_Commerce.Application.Specifications
             Criteria = criteria;
         }
 
-        protected void AddInclude (Expression<Func<TEntity,object>> include)
+        protected void AddInclude(Expression<Func<TEntity, object>> include)
         {
             IncludeExpressions.Add(include);
         }
