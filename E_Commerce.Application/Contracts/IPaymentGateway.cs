@@ -7,7 +7,7 @@ namespace E_Commerce.Application.Contracts
 {
     public interface IPaymentGateway
     {
-        Task<CreatePaymentResponse> CreatePaymentIntentAsync(decimal amount, CancellationToken ct = default);
+        Task<CreatePaymentResponse> CreatePaymentIntentAsync(decimal amount, string idempotencyKey, CancellationToken ct = default);
 
         Task<CreatePaymentResponse> UpdatePaymentIntentAsync(string paymentIntentId, decimal amount, CancellationToken ct = default);
 

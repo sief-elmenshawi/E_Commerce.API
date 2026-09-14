@@ -32,7 +32,7 @@ namespace E_Commerce.Application.Services
             if (basket is null)
                 return Result<OrderToReturnDto>.Fail(Error.NotFound("Basket Not Found", $"Basket With {orderDto.BasketId} Is Not Found"));
             
-            if (basket.Items.Count == 0 )
+            if (basket.Items is not { Count: > 0 })
                 return Result<OrderToReturnDto>.Fail(Error.Validation("Basket Empty", $"Basket Id Empty "));
 
             // 2-Get Item From Basket Validate as Product

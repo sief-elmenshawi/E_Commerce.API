@@ -19,7 +19,15 @@ namespace E_Commerce.API.Attributes
             var cacheKey = CreateCacheKey(context.HttpContext.Request);
 
             // Check If Cache Data Exists 
-            var cached = await cacheService.GetDataAsync(cacheKey);
+            string? cached = null;
+            try
+            {
+                cached = await cacheService.GetDataAsync(cacheKey);
+            }
+            catch (Exception)
+            {
+                // Redis unreachable - fall back to executing the endpoint normally.
+            }
 
             // If Exists, Return Cached Data and Skip Executing End point
             if(!string.IsNullOrEmpty(cached))
@@ -35,7 +43,16 @@ namespace E_Commerce.API.Attributes
             // If Not Exists, Execute End point and Cache the Result if 200 ok response
             var executed = await next.Invoke();
             if(executed.Result is OkObjectResult { Value : not null} ok)
-                await cacheService.SetDataAsync(cacheKey, ok.Value, TimeSpan.FromSeconds(_durationInSeconds));
+            {
+                try
+                {
+                    await cacheService.SetDataAsync(cacheKey, ok.Value, TimeSpan.FromSeconds(_durationInSeconds));
+                }
+                catch (Exception)
+                {
+                    // Redis unreachable - skip caching, the response is already valid.
+                }
+            }
             return;
         }
         private static string CreateCacheKey(HttpRequest request)

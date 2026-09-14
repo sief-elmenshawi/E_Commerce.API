@@ -33,13 +33,13 @@ namespace E_Commerce.Application.Services
         public async Task<Result<bool>> DeleteBasketAsync(string basketId, CancellationToken ct = default)
         {
             var result = await basketRepository.DeleteBasketAsync(basketId, ct);
-            return result ? Result<bool>.Ok(true) : Result<bool>.Fail(Error.Failure("Basket Delete Failure", "Can Not Delete Basket"));
+            return result ? Result<bool>.Ok(true) : Result<bool>.Fail(Error.NotFound("Basket Delete Failure", "Can Not Delete Basket"));
         }
 
         public async Task<Result<BasketDto>> GetBasketAsync(string basketId, CancellationToken ct = default)
         {
             var basket = await basketRepository.GetBasketAsync(basketId, ct);
-            return basket == null ? Result<BasketDto>.Fail(Error.Failure("Basket Not Found", "Basket not found")) :mapper.Map<BasketDto>(basket);
+            return basket == null ? Result<BasketDto>.Fail(Error.NotFound("Basket Not Found", "Basket not found")) :mapper.Map<BasketDto>(basket);
         }
     }
 }

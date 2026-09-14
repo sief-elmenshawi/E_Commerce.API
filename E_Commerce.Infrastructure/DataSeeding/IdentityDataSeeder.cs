@@ -33,6 +33,7 @@ namespace E_Commerce.Infrastructure.DataSeeding
                     await dbContext.Database.MigrateAsync(ct);
                 if (!await roleManager.Roles.AnyAsync())
                 {
+                    await roleManager.CreateAsync(new IdentityRole("Customer"));
                     await roleManager.CreateAsync(new IdentityRole("Admin"));
                     await roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
                 }

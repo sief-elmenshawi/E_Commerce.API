@@ -27,7 +27,6 @@ namespace E_Commerce.API.Controllers
         }
 
         // Get Product By Id 
-        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductDto>> GetProduct(int id , CancellationToken ct)

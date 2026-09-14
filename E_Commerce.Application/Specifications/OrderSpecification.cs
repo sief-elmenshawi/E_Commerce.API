@@ -15,7 +15,8 @@ namespace E_Commerce.Application.Specifications
         }
         public OrderSpecification(Guid id,string email):base(x=>x.Id == id && x.BuyerEmail == email)
         {
-            
+            AddInclude(x => x.DeliveryMethod);
+            AddInclude(x => x.Item);
         }
     }
 }

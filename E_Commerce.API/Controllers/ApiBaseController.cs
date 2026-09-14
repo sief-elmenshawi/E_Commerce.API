@@ -41,7 +41,11 @@ namespace E_Commerce.API.Controllers
         //Fail
         protected static ObjectResult ToProblem(IReadOnlyList<Error> errors)
         {
-            var firstError = errors[0];
+            var errorList = errors is { Count: > 0 }
+                ? errors
+                : new[] { Error.Failure("General.Failure", "An unexpected error occurred.") };
+
+            var firstError = errorList[0];
 
             var statusCode = firstError.ErrorType switch
             {
@@ -58,7 +62,7 @@ namespace E_Commerce.API.Controllers
                 Status = statusCode,
                 Title = firstError.Code,
                 Detail = firstError.Description,
-                Extensions = { ["errors"] = errors }
+                Extensions = { ["errors"] = errorList }
             };
 
             return new ObjectResult(problem) { StatusCode = statusCode };

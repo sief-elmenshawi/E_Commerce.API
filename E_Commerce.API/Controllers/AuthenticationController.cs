@@ -46,6 +46,7 @@ namespace E_Commerce.API.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("RegisterPolicy")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto ,CancellationToken ct )
         {
             var registerResult = await authenticationService.RegisterAsync(registerDto,ct);
@@ -123,7 +124,7 @@ namespace E_Commerce.API.Controllers
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
-                    Path = "/api/Authentication"
+                    Path = "/api"
             });
 
             return NoContent();
@@ -131,6 +132,7 @@ namespace E_Commerce.API.Controllers
 
         // check Email is already exist or not
         [HttpGet("emailexists")]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<ActionResult<bool>> CheckEmail([FromQuery] string email, CancellationToken ct)
         {
             return ToActionResult(await authenticationService.CheckEmailExistAsync(email, ct));
@@ -169,7 +171,7 @@ namespace E_Commerce.API.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTimeOffset.UtcNow.AddDays(7),
                     IsEssential = true,
-                    Path = "/api/Authentication"
+                    Path = "/api"
             });
         }
     }

@@ -18,8 +18,9 @@ namespace E_Commerce.API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<OrderToReturnDto>> CreateOrder([FromBody] OrderDto orderDto, [FromQuery] string email,CancellationToken ct)
+        public async Task<ActionResult<OrderToReturnDto>> CreateOrder([FromBody] OrderDto orderDto, CancellationToken ct)
         {
+            var email = GetEmailFromToken();
             return ToActionResult(await orderService.CreateOrderAsync(orderDto, email, ct));
         }
 
@@ -32,16 +33,18 @@ namespace E_Commerce.API.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetAllOrdersByEmail([FromQuery] string email,CancellationToken ct)
+        public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetAllOrdersByEmail(CancellationToken ct)
         {
-            return ToActionResult(await orderService.GetAllOrdersByEmailAsync(email,ct));
+            var email = GetEmailFromToken();
+            return ToActionResult(await orderService.GetAllOrdersByEmailAsync(email, ct));
         }
 
         [Authorize]
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdAndEmail(Guid id,[FromQuery] string email, CancellationToken ct)
+        public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdAndEmail(Guid id, CancellationToken ct)
         {
-            return ToActionResult(await orderService.GetOrderByIdAndEmailAsync(id,email, ct));
+            var email = GetEmailFromToken();
+            return ToActionResult(await orderService.GetOrderByIdAndEmailAsync(id, email, ct));
         }
 
 

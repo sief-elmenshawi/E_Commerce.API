@@ -11,7 +11,13 @@ namespace E_Commerce.Application.Common
         public string? SearchValue { get; set; }
         public ProductSortOptions Sort { get; set; }
 
-        public int PageIndex { get; set; } = 1;
+        private int pageIndex = 1;
+
+        public int PageIndex
+        {
+            get => pageIndex;
+            set => pageIndex = value < 1 ? 1 : value;
+        }
 
         private const int DefaultPageSize = 5;
         private const int MaxPageSize = 10;

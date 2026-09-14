@@ -27,7 +27,7 @@ namespace E_Commerce.Application.Validators.Authentications
                 .MaximumLength(100).WithMessage("Display name must not exceed 100 characters.");
 
             RuleFor(x => x.PhoneNumber)
-                .Matches(@"^01[0-2,5]{1}[0-9]{8}$")
+                .Matches(@"^01[0125][0-9]{8}$")
                 .When(x => !string.IsNullOrEmpty(x.PhoneNumber))
                 .WithMessage("Invalid Egyptian phone number format.");
         }

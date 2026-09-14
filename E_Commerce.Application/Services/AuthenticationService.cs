@@ -27,6 +27,9 @@ namespace E_Commerce.Application.Services
         {
             var userResult = await identityService.FindUserByEmailAsync(email, ct);
 
+            if (!userResult.IsSuccess)
+                return Result<UserDto>.Fail(userResult.Errors);
+
             var user = userResult.data;
             var rolesResult = await identityService.GetUserRoles(user.Email, ct);
             var token = tokenService.CreateToken(user.Id, user.UserName, user.Email, rolesResult.data);
@@ -50,13 +53,11 @@ namespace E_Commerce.Application.Services
             // Get User By Email
             var userResult = await identityService.FindUserByEmailAsync(loginDto.Email, ct);
             if(!userResult.IsSuccess)
-                return Result<UserDto>.Fail(userResult.Errors);
+                return Result<UserDto>.Fail(Error.Unauthorized("Invalid email or password"));
 
             // Check Password
             var passwordResult = await identityService.CheckPasswordAsync(loginDto.Email,loginDto.Password, ct);
-            if(!passwordResult.IsSuccess)
-                return Result<UserDto>.Fail(passwordResult.Errors);
-            if (!passwordResult.data)
+            if(!passwordResult.IsSuccess || !passwordResult.data)
                 return Result<UserDto>.Fail(Error.Unauthorized("Invalid email or password"));
 
             var user = userResult.data;

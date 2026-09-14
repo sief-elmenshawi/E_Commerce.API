@@ -27,4 +27,8 @@
     <ProjectReference Include="..\E_Commerce.Infrastructure\E_Commerce.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="DataSeed\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

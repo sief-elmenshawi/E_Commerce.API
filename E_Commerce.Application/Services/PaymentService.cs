@@ -22,12 +22,12 @@ namespace E_Commerce.Application.Services
             this.paymentGateway = paymentGateway;
         }
 
-        public async Task<Result<CreatePaymentResponse>> CreatePaymentAsync(CreatePaymentRequest request, CancellationToken ct = default)
+        public async Task<Result<CreatePaymentResponse>> CreatePaymentAsync(string buyerEmail, CreatePaymentRequest request, CancellationToken ct = default)
         {
             var orderRepository = unitOfWork.GetRepository<Order, Guid>();
             var paymentRepository = unitOfWork.GetRepository<Payment, Guid>();
 
-            var specification = new OrderForPaymentSpecification(request.OrderId);
+            var specification = new OrderForPaymentSpecification(request.OrderId, buyerEmail);
 
             var order = await orderRepository.GetByIdAsync(specification, ct);
 
@@ -64,7 +64,7 @@ namespace E_Commerce.Application.Services
                 {
                     // The stored PaymentIntent is no longer valid on Stripe's side (expired, deleted, or created under a different key).
                     // Fall back to creating a brand new one instead of failing the whole request.
-                    gatewayResponse = await paymentGateway.CreatePaymentIntentAsync(amount, ct);
+                    gatewayResponse = await paymentGateway.CreatePaymentIntentAsync(amount, $"create-payment-{order.Id}", ct);
 
                     pendingPayment.Amount = amount;
                     pendingPayment.PaymentIntentId = gatewayResponse.PaymentIntentId;
@@ -73,7 +73,7 @@ namespace E_Commerce.Application.Services
             }
             else
             {
-                gatewayResponse = await paymentGateway.CreatePaymentIntentAsync(amount, ct);
+                gatewayResponse = await paymentGateway.CreatePaymentIntentAsync(amount, $"create-payment-{order.Id}", ct);
 
                 var payment = new Payment
                 {

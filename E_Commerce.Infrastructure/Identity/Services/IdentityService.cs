@@ -44,7 +44,14 @@ namespace E_Commerce.Infrastructure.Identity.Services
                 var errors = result.Errors.Select(e => new Error(e.Code, e.Description)).ToList();
                 return Result<IdentityUserResult>.Fail(errors);
             }
-            
+
+            var roleResult = await userManager.AddToRoleAsync(user, "Customer");
+            if (!roleResult.Succeeded)
+            {
+                var roleErrors = roleResult.Errors.Select(e => new Error(e.Code, e.Description)).ToList();
+                return Result<IdentityUserResult>.Fail(roleErrors);
+            }
+
             return Result<IdentityUserResult>.Ok(new IdentityUserResult(user.Id, user.DisplayName, user.Email, user.UserName));
         }
 
@@ -66,7 +73,7 @@ namespace E_Commerce.Infrastructure.Identity.Services
 
         public async Task<Result<AddressDto>> GetAddressByEmailAysnc(string email, CancellationToken ct = default)
         {
-            var user = await userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email == email, ct);
+            var user = await userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.NormalizedEmail == userManager.NormalizeEmail(email), ct);
             
             if(user?.Address  == null)
                 return Result<AddressDto>.Fail(Error.NotFound("Address not found", $"Address for user with email {email} not found"));
@@ -95,9 +102,12 @@ namespace E_Commerce.Infrastructure.Identity.Services
 
         public async Task<Result<AddressDto>> UpdateOrInsertUserAddressAsync(string email, AddressDto addressDto, CancellationToken ct = default)
         {
-            var user = await userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email == email, ct);
+            var user = await userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.NormalizedEmail == userManager.NormalizeEmail(email), ct);
 
-            if(user?.Address == null)
+            if (user is null)
+                return Result<AddressDto>.Fail(Error.NotFound("User not found", $"User with email {email} not found"));
+
+            if(user.Address == null)
             {
                 // Insert new address
                 user.Address = new Address

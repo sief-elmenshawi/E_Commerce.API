@@ -18,7 +18,7 @@ namespace E_Commerce.Infrastructure.Services
             paymentIntentService = new PaymentIntentService();
         }
 
-        public async Task<CreatePaymentResponse> CreatePaymentIntentAsync(decimal amount, CancellationToken ct = default)
+        public async Task<CreatePaymentResponse> CreatePaymentIntentAsync(decimal amount, string idempotencyKey, CancellationToken ct = default)
         {
             var options = new PaymentIntentCreateOptions
             {
@@ -30,7 +30,12 @@ namespace E_Commerce.Infrastructure.Services
                 }
             };
 
-            var paymentIntent = await paymentIntentService.CreateAsync(options, cancellationToken: ct);
+            var requestOptions = new RequestOptions
+            {
+                IdempotencyKey = idempotencyKey
+            };
+
+            var paymentIntent = await paymentIntentService.CreateAsync(options, requestOptions, cancellationToken: ct);
 
             return new CreatePaymentResponse
             {

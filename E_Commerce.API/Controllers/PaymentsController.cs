@@ -18,7 +18,8 @@ namespace E_Commerce.API.Controllers
         [HttpPost]
         public async Task<ActionResult<CreatePaymentResponse>> CreatePayment([FromBody] CreatePaymentRequest request, CancellationToken ct)
         {
-            return ToActionResult(await paymentService.CreatePaymentAsync(request, ct));
+            var email = GetEmailFromToken();
+            return ToActionResult(await paymentService.CreatePaymentAsync(email, request, ct));
         }
 
         [AllowAnonymous]
