@@ -8,7 +8,7 @@ Robust .NET 10 Web API for an e-commerce platform. Clean Architecture with CQRS-
 - **E_Commerce.Infrastructure** — EF Core `StoreDbContext`, Identity `AppIdentityDbContext`, Redis caching, Stripe payment gateway, data seeding
 - **E_Commerce.Tests** — xUnit unit tests
 
-The React frontend lives in a separate repository: `D:\Assignment\E_Commerce.Web`.
+The React frontend lives in a separate repository: `D:\Assignment\E_Commerce.Web` — see its repo at **[github.com/sief-elmenshawi/E_Commerce.Web](https://github.com/sief-elmenshawi/E_Commerce.Web)**. That frontend is the storefront for **this** API.
 
 ## Tech Stack
 

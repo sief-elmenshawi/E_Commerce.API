@@ -15,4 +15,8 @@
     <ProjectReference Include="..\E_Commerce.Domain\E_Commerce.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="E_Commerce.Tests" />
+  </ItemGroup>
+
 </Project>
