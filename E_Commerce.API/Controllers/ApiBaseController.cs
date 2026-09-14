@@ -75,5 +75,13 @@ namespace E_Commerce.API.Controllers
             return email;
         }
 
+        // The authenticated user's id (from the NameIdentifier claim issued by TokenService). Baskets are
+        // owned and keyed by this id, so helper is what enforces basket ownership across endpoints.
+        protected string GetBasketOwnerId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User id claim not found");
+            return userId;
+        }
+
     }
 }

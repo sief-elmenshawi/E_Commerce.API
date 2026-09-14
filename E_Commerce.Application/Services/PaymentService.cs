@@ -6,6 +6,8 @@ using E_Commerce.Application.Specifications;
 using E_Commerce.Domain.Contracts;
 using E_Commerce.Domain.Entities.Orders;
 using E_Commerce.Domain.Entities.Payments;
+using E_Commerce.Domain.Entities.Products;
+using E_Commerce.Domain.Entities.Products;
 
 namespace E_Commerce.Application.Services
 {
@@ -142,6 +144,34 @@ namespace E_Commerce.Application.Services
                 : OrderStatus.PaymentFailed;
 
             orderRepository.Update(payment.Order);
+
+            if (webhookEvent.EventType == PaymentWebhookEventType.Succeeded)
+            {
+                var productRepository = unitOfWork.GetRepository<Product, int>();
+                var obtainProductsSpec = new ProductWithIdSpecification(payment.Order.Item.Select(i => i.Product.ProductId).ToHashSet());
+
+                var products = await productRepository.GetAllAsync(obtainProductsSpec, ct);
+
+                foreach (var orderItem in payment.Order.Item)
+                {
+                    var product = products.FirstOrDefault(x => x.Id == orderItem.Product.ProductId);
+
+                    if (product is null)
+                    {
+                        return Result.Fail(Error.NotFound("Product.NotAvailable", $"Product '{orderItem.Product.ProductName}' is no longer available."));
+                    }
+
+                    if (product.QuantityInStock < orderItem.Quantity)
+                    {
+                        return Result.Fail(Error.Conflict("Stock.Insufficient",
+                            $"Only {product.QuantityInStock} unit(s) of '{product.Name}' left in stock but {orderItem.Quantity} were ordered."));
+                    }
+
+                    product.QuantityInStock -= orderItem.Quantity;
+
+                    productRepository.Update(product);
+                }
+            }
 
             processedEventRepository.Add(new ProcessedWebhookEvent { StripeEventId = webhookEvent.StripeEventId });
 

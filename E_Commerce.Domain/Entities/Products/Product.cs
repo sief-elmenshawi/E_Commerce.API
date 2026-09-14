@@ -19,5 +19,9 @@ namespace E_Commerce.Domain.Entities.Products
         public ProductType ProductType { get; set; } = default!;
         public int TypeId { get; set; }
 
+        public int QuantityInStock { get; set; }
+
+        public byte[] RowVersion { get; set; } = [];
+
     }
 }

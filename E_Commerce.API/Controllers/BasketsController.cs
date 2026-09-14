@@ -21,7 +21,13 @@ namespace E_Commerce.API.Controllers
         [ProducesResponseType(typeof(BasketDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<BasketDto>> GetBasket(string id, CancellationToken ct)
         {
-            var result = await basketService.GetBasketAsync(id,ct);
+            // The basket is owned by the authenticated user and keyed by their id - never serve someone else's basket.
+            if (!string.Equals(id, GetBasketOwnerId(), StringComparison.OrdinalIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            var result = await basketService.GetBasketAsync(GetBasketOwnerId(), ct);
             return ToActionResult(result);
         }
 
@@ -29,6 +35,8 @@ namespace E_Commerce.API.Controllers
         [HttpPost]
         public async Task<ActionResult<BasketDto>> CreateOrUpdateBasket([FromBody] BasketDto basket, CancellationToken ct)
         {
+            // Baskets are always keyed by the authenticated user's id - never accept a client-supplied basket id.
+            basket.Id = GetBasketOwnerId();
             var result = await basketService.CreateOrUpdateBasketAsync(basket, ct:ct);
             return ToActionResult(result);
         }
@@ -37,7 +45,13 @@ namespace E_Commerce.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteBasket(string id, CancellationToken ct)
         {
-            var result = await basketService.DeleteBasketAsync(id, ct);
+            // Baskets are keyed by their owner's id - only the authenticated owner may delete their own basket.
+            if (!string.Equals(id, GetBasketOwnerId(), StringComparison.OrdinalIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            var result = await basketService.DeleteBasketAsync(GetBasketOwnerId(), ct);
             return ToActionResult(result);
         }
 

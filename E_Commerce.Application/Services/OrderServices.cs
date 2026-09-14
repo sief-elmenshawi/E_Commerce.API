@@ -49,8 +49,15 @@ namespace E_Commerce.Application.Services
             {
                 var product = products.FirstOrDefault(x => x.Id == item.Id);
 
-                if(product is null)
-                    return Result<OrderToReturnDto>.Fail(Error.NotFound("Product Not Found", $"Product With {product?.Name} Is Not Found"));
+                if (product is null)
+                    return Result<OrderToReturnDto>.Fail(Error.NotFound("Product Not Found", $"Product With {item.Id} Is Not Found"));
+
+                if (product.QuantityInStock < item.Quantity)
+                {
+                    return Result<OrderToReturnDto>.Fail(Error.Validation(
+                        "Stock.Insufficient",
+                        $"Product '{product.Name}' has only {product.QuantityInStock} unit(s) in stock but {item.Quantity} was requested."));
+                }
 
                 orderItem.Add(new OrderItem()
                 {

@@ -21,8 +21,10 @@ namespace E_Commerce.Infrastructure.Data.Configurations
 
             builder.Property(x => x.Price).HasColumnType("decimal(18,2)");
             builder.Property(x => x.Name).HasMaxLength(100);
-            builder.Property(x => x.Description).HasMaxLength(500); 
+            builder.Property(x => x.Description).HasMaxLength(500);
             builder.Property(x => x.PictureUrl).HasMaxLength(200);
+            builder.Property(x => x.QuantityInStock).IsRequired();
+            builder.Property(x => x.RowVersion).IsRowVersion();
         }
     }
 }
