@@ -104,7 +104,16 @@ namespace E_Commerce.Application.Services
             if (result <= 0)
                 return Result<OrderToReturnDto>.Fail(Error.Failure("Order Failure", $"Order Can Not Created"));
 
-            await basketRepository.DeleteBasketAsync(orderDto.BasketId,ct);
+            // Basket cleanup is a non-critical side-effect - the order is already persisted. If the cleanup fails,
+            // failing the whole request would make the client retry and create a duplicate order newer than this one.
+            try
+            {
+                await basketRepository.DeleteBasketAsync(orderDto.BasketId,ct);
+            }
+            catch
+            {
+                // Log and continue - the basket will be purged lazily by a later sweep.
+            }
 
             return Result<OrderToReturnDto>.Ok(mapper.Map<OrderToReturnDto>(order));
 
@@ -119,14 +128,14 @@ namespace E_Commerce.Application.Services
 
         public async Task<Result<IReadOnlyList<OrderToReturnDto>>> GetAllOrdersByEmailAsync(string email, CancellationToken ct = default)
         {
-            var orders = await unitOfWork.GetRepository<Order, Guid>().GetAllAsync(new OrderSpecification(email));
+            var orders = await unitOfWork.GetRepository<Order, Guid>().GetAllAsync(new OrderSpecification(email), ct);
             return Result<IReadOnlyList<OrderToReturnDto>>.Ok(mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders));
 
         }
 
         public async Task<Result<OrderToReturnDto>> GetOrderByIdAndEmailAsync(Guid Id, string email, CancellationToken ct = default)
         {
-            var order = await unitOfWork.GetRepository<Order, Guid>().GetByIdAsync(new OrderSpecification(Id,email));
+            var order = await unitOfWork.GetRepository<Order, Guid>().GetByIdAsync(new OrderSpecification(Id,email), ct);
             if (order is null)
                 return Error.NotFound("OrderNotFound", $"Order Not Found {Id}");
 

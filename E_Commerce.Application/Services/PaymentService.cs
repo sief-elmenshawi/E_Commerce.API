@@ -7,7 +7,7 @@ using E_Commerce.Domain.Contracts;
 using E_Commerce.Domain.Entities.Orders;
 using E_Commerce.Domain.Entities.Payments;
 using E_Commerce.Domain.Entities.Products;
-using E_Commerce.Domain.Entities.Products;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce.Application.Services
 {
@@ -175,7 +175,17 @@ namespace E_Commerce.Application.Services
 
             processedEventRepository.Add(new ProcessedWebhookEvent { StripeEventId = webhookEvent.StripeEventId });
 
-            await unitOfWork.SaveChangesAsync(ct);
+            try
+            {
+                await unitOfWork.SaveChangesAsync(ct);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // The stock quantities were changed by a concurrent transaction after we read them.
+                // Nothing was persisted, so it is safe to fail the webhook and let Stripe retry.
+                return Result.Fail(Error.Conflict("Stock.ConcurrencyConflict",
+                    "Stock changed while processing this payment. Please retry."));
+            }
 
             return Result.OK();
         }

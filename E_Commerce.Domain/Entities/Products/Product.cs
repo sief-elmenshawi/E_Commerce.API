@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Domain.Common;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -21,6 +22,7 @@ namespace E_Commerce.Domain.Entities.Products
 
         public int QuantityInStock { get; set; }
 
+        [Timestamp]
         public byte[] RowVersion { get; set; } = [];
 
     }

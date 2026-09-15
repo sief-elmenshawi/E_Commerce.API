@@ -36,6 +36,7 @@ namespace E_Commerce.Application.Services
 
             return new UserDto
             {
+                Id = user.Id,
                 Email = user.Email,
                 DisplayName = user.DisplayName,
                 Token = token
@@ -66,6 +67,7 @@ namespace E_Commerce.Application.Services
             var token =  tokenService.CreateToken(user.Id, user.UserName, user.Email,roles);
             return new UserDto
             {
+                Id = user.Id,
                 Email = loginDto.Email,
                 DisplayName = userResult.data.DisplayName,
                 Token = token
@@ -88,6 +90,7 @@ namespace E_Commerce.Application.Services
             var token = tokenService.CreateToken(user.Id, user.UserName, user.Email, roles);
             return Result<UserDto>.Ok(new UserDto()
             {
+                Id = user.Id,
                 Email = user.Email,
                 DisplayName = user.DisplayName,
                 Token = token
